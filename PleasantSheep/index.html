@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐播放</title>
+    <style>
+        *{
+            margin: 0;
+        }
+        .clear:after{
+            content: '';
+            clear: both;
+            display: block;
+
+        }
+        li{
+            list-style: none;
+        }
+        a{
+            text-decoration: none;
+            color: white;
+        }
+        .nav{
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            background-color: black;
+        }
+        .nav>ul{
+            width: 300px;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .nav li{
+            flex-shrink: 5;
+        }
+        .nav .bigFont{
+            flex-shrink: 1;
+            font-size: 18px;
+            line-height: 60px;
+        }
+        .nav .smallFont{
+            font-size: 12px;
+            line-height: 60px;
+            flex-shrink: 1;
+            position: relative;
+        }
+        .smallFont a{
+            color: rgb(212, 209, 209);
+        }
+        .nav .more{
+            display: flex;
+            justify-content: space-around;
+            line-height: 60px;
+            width: 150px;
+            height: 60px;
+            flex-shrink: 1;
+        }
+        .nav>div>img{
+            margin-top: 15px;
+        }
+        .smallFont div{
+            display: inline-block;
+            background-image: url(./images/小图标.png);
+            height: 20px;
+            width: 20px;
+            overflow: hidden;
+            vertical-align: middle;
+            background-position: -229px -25px;
+        }
+        .search{
+            position: relative;
+            flex-shrink: 1;
+        }
+        .search p{
+            color:rgb(146, 141, 141);
+            font-size: 8px;
+            position:absolute;
+            top: 20px;
+            left: 10px;
+        }
+        .bg{
+            width: 1000px;
+            margin: 0 auto;
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .words{
+            width: 400px;
+            height: 200px;
+        }
+        .topCon{
+            width: 400px;
+            height: 80px;
+            margin:0 auto;
+        }
+        .topCon p{
+            display: inline-block;
+        }
+        .con{
+            display: inline-block;
+            width:100px;
+            height: 20px;
+            font-size: 10px;
+            color:rgb(119, 117, 117);
+        }
+        .con p{
+            font-size: 12px;
+            color: rgb(247, 194, 96);
+        }
+
+       h3{
+           font-weight: normal;
+       }
+        .topCon :nth-child(2){
+            margin-left: 60px;
+        }
+        .topCon>h3{
+            text-align: center;
+        }
+        .topCon>a{
+            width: 100px;
+            height: 20px;
+            font-size: 10px;
+            color: black;
+        }
+        .topCon :nth-child(5){
+            color: rgb(247, 194, 96);
+        }
+        .topCon .img{
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            vertical-align: middle;
+            background-image: url(./images/评论.jpg);
+        }
+        .time{
+            text-align: center;
+            font-size: 3px;
+        }
+        .bottomCon>p{
+            text-align: center;
+            font-size: 13px;
+            line-height: 20px;
+        }
+        .songs{
+            width: 400px;
+            height:550px;
+        }
+        .outer{
+            width: 203px;
+            height: 203px;
+            margin: 0 auto;
+            padding: 4px;
+            border-radius: 50%;
+            border: 1px solid rgb(194, 193, 193);
+        }
+        .pic{
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-image: url(./images/喜羊羊.jpg);
+            overflow: hidden;
+            animation:animation1 8s linear infinite;
+        }
+        .playGo{
+            width: 45px;
+            height: 40px;
+            margin-left: 20px;
+            background-image: url(./images/大图标.jpg);
+            background-position: -204px 0;
+            display: inline;
+            float: left;
+        }
+        .pause{
+            width: 45px;
+            height: 40px;
+            margin-left: 20px;
+            background-image: url(./images/大图标.jpg);
+            background-position: -109px 0;
+            display: inline;
+            float: left;
+        }
+        .player{
+            display:inline;
+            float: left;
+        }
+        .play{
+            display: inline;
+            width: 200px;
+            height: 4px;
+            float: left;
+            margin-left: 20px;
+            margin-top: 20px;
+            position: relative;
+            background-color:rgb(194, 193, 193);
+        }
+        #buffer{
+            width: 0px;
+            height: 4px;
+            background-color:rgb(121, 119, 119) ;
+        }
+        .progressBar{
+            width: 0px;
+            height: 4px;
+            background-color:#ffcd2d ;
+        }
+        #wp_processBtn{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            position:absolute;
+            background-color:#ffcd2d;
+            top: -3px;
+        }
+        #right{
+            float: left;
+            position: relative;
+        }
+        #playTime{
+            position:absolute;
+            left: 10px;
+            top: 10px;
+            color:rgb(194, 193, 193);
+        }
+        .getMusic{
+            width: 400px;
+            height: 50px;
+        }
+        .sound{
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            position:absolute;
+            top: 10px;
+            left: 60px;
+            background-image: url(./images/大图标.jpg);
+            background-position:-44px 0;
+        }
+        .down{
+            width:198px;
+            height: 38px;
+            margin:0 auto;
+            background-image: url(./images/大图标.jpg);
+            background-position: 0 -50px;
+            position: relative;
+        }
+        .down>div{
+            display: inline-block;
+            width: 17px;
+            height: 17px;
+            margin-left: 30px;
+            vertical-align: middle;
+            margin-top: 8px;
+            background-image: url(./images/大图标.jpg);
+            background-position: 0 0;
+        }
+        .down>a{
+            color:black;
+            position: absolute;
+            margin-left: 3px;
+            top: 8px;
+            font-size: 13px;
+        }
+        .comment{
+            width: 400px;
+            height: 100px;
+        }
+        .comment .headshort{
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            margin-left: 50px;
+            margin-top: 40px;
+            float: left;
+        }
+        .headshort>img{
+            width: 50px;
+            height: 50px;
+        }
+        .comment .com_content{
+            display: block;
+            width: 200px;
+            height: 50px;
+            float: left;
+            margin-top: 40px;
+            border-radius: 10px;
+            background-color: rgb(218, 214, 219);
+        }
+        .comment .trangle{
+            display: inline-block;
+            width: 0px;
+            height: 0px;
+            float: left;
+            margin-top: 50px;
+            border-width: 13px;
+            border-style: solid;
+            border-color: transparent rgb(218, 214, 219) transparent transparent;
+        }
+        .com_content .com_name{
+            font-size: 13px;
+            color: rgb(184, 180, 180);
+            margin-top: 5px;
+            margin-left: 10px;
+        }
+        .com_content .com_music{
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            margin-top: 6px;
+            margin-left: 10px;
+            background-image: url(./images/音频.png);
+        }
+        .com_content .com_title{
+            display: inline-block;
+            color: rgb(39, 38, 38);
+            font-size: 13px;
+        }
+        .com_content>a{
+            font-size: 13px;
+            color: blue;
+        }
+        .majorComment{
+            width: 700px;
+            height: 200px;
+            margin: 0 auto;
+        }
+        .majorComment :nth-child(1){
+            font-size: 15px;
+        }
+        .majorComment .change{
+            font-size: 13px;
+            margin-left: 10px;
+        }
+        .majorComment>hr{
+            margin-top: 15px;
+        }
+        .real{
+            position: relative;
+        }
+        .real>div{
+            position: absolute;
+            display: inline-block;
+            top: 10px;
+            height: 50px;
+            width: 50px;
+        }
+        .real>div img{
+            width: 50px;
+            height: 50px;
+        }
+        .real>textarea{
+            position: absolute;
+            left: 60px;
+            margin-top: 10px;
+            width: 633px;
+            height: 80px;
+            border-color: rgb(185, 183, 183);
+        }
+        .getEx{
+            width: 700px;
+            height: 50px;
+            margin-top: 100px;
+        }
+        .expression{
+            display: inline-block;
+            float: left;
+            margin-left: 55px;
+        }
+        .expression img{
+            width: 25x;
+            height: 25px;
+        }      
+        .getEx p{
+            display: inline-block;
+            font-size: 13px;
+            float: left;
+            margin-left: 450px;
+            margin-top: 3px;
+        }
+        #submit{
+            width:60px;
+            background-color: rgb(241, 170, 88);
+            color: white;
+            border-radius: 5px;
+            border:none;
+            float: left;
+            margin-top: 3px;
+            margin-left: 8px;
+        }
+        .goodComments{
+            width: 700px;
+            overflow: hidden;
+            height: 275px;
+            margin-top: 50px;
+        }
+        .goodComments p{
+            font-size: 15px;
+            overflow: hidden;
+        }
+        .goodComments hr{
+            margin-top: 10px;
+        }
+        .getrealComment{
+            width: 700px;
+            height: 63x;
+            margin-top: 10px;
+            position: relative;
+            border: 1px;
+            border-bottom-style:dotted ;
+        }
+        .headt{
+            width: 45px;
+            height: 45px;
+            vertical-align: text-top;
+        }
+        .getName{
+            display: inline-block;
+            width: 80px;
+            font-size: 10px;
+            color: rgb(247, 194, 96);
+        }
+        .realComment{
+            display: inline-block;
+            position: absolute;
+            top: 23px;
+            left: 50px;
+        }
+        .getrealComment p{
+            font-size: 8px;
+        }
+        .getTime{
+            display: inline-block;
+            position: absolute;
+            color: gray;
+            top: 50px;
+            left: 50px;
+        }
+        .share{
+            margin-left: 530px;
+        }
+        .share a{
+            font-size: 10px;
+            color: gray;
+        }
+        .delete{
+            margin-left: 590px;
+            vertical-align: text-top;
+        }
+        .delete a{
+            font-size: 10px;
+            color: gray;
+        }
+        .good{
+            margin-left: 5px;
+            font-size: 10px;
+            color:gray;
+        }
+        .good img{
+            vertical-align: sub;
+        }
+        .response{
+            margin-left: 5px;
+        }
+        .response a{
+            font-size: 10px;
+            color:gray;
+        }
+        .pages{
+            width: 700px;
+            height: 50px;
+            margin: 0 auto;
+        }
+        .find{
+            width: 30px;
+            height: 30px;
+            background-color: rgb(231, 230, 230);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-left: 10px;
+            float: left;
+        }
+        .letCenter{
+            width: 400px;
+            height: 50px;
+            margin-left: 190px;
+        }
+
+        .blank{
+            width: 700px;
+            height: 32px;
+        }
+        /*动画旋转代码*/
+        @keyframes animation1{
+            0%{
+                transform: rotate(0deg);
+            }
+            10%{
+                transform: rotate(36deg);
+            }
+            20%{
+                transform: rotate(72deg);
+            }
+            30%{
+                transform: rotate(108deg);
+            }
+            40%{
+                transform: rotate(144deg);
+            }
+            50%{
+                transform: rotate(180deg);
+            }
+            60%{
+                transform: rotate(216deg);
+            }
+            70%{
+                transform: rotate(252deg);
+            }
+            80%{
+                transform: rotate(288deg);
+            }
+            90%{
+                transform: rotate(324deg);
+            }
+            100%{
+                transform: rotate(360deg);
+            }
+
+        }
+        /*鼠标移动上去，翻页的变成黄色*/
+        .find:hover{
+            background-color: rgb(247, 194, 96);
+            cursor: pointer;
+        }
+        #submit:hover{
+            cursor: pointer;
+            border-width: 2px;
+            border-style: outset;
+            border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
+        }
+       
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <img src="images/黑色音乐.jpg">
+        <ul class="bigFont">
+            <li><a href="###">首页</a></li>
+            <li><a href="###">榜单</a></li>
+            <li><a href="###">歌手</a></li>
+            <li><a href="###">下载酷我客户端</a></li>
+        </ul>
+        <ul class="smallFont">
+            <li><div></div><a href="###">美女秀</a></li>
+            <li><div></div><a href="###">酷我耳机</a></li>
+            <li><div></div><a href="###">VIP会员</a></li>
+            <li><div></div><a href="###">i 听</a></li>
+        </ul>
+        <ul class="more">
+            <li><a href="###">更多服务</a></li>
+            <li><a href="###">登录</a></li>
+            <li><a href="###">^</a></li>
+        </ul>
+        <div class="search">
+            <img src="images/搜索框.png">
+            <p>找到好音乐</p>
+        </div>
+    </div>
+    <div class="bg">
+        <div class="words">
+            <div class="topCon">
+                <h3>喜羊羊</h3>
+                <div class="con">专辑：<p>儿歌大全</p></div>
+                <div class="con">歌手：<p>华语群星</p></div>
+                <a href="###">分享&nbsp;&nbsp;</a>
+                <a href="###"><div class="img"></div>&nbsp;&nbsp;评论</a>
+                <br/>
+                <div class="time">上传时间：2015-10-02 歌曲来源：网络</div>
+            </div>
+            <hr/>
+            <div class="bottomCon">
+                <p>在所有天气拥有叫人 大笑的力量</p>
+                <p>虽然我只是羊</p>
+                <p>虽然我只是羊</p>
+                <p>喜羊羊 美羊羊 懒羊羊 沸羊羊</p>
+                <p>慢羊羊 软绵绵 红太狼 灰太狼</p>
+            </div>
+            
+        </div>
+        <div class="songs">
+            <div class="outer">
+                <div class="pic" id="picture"></div>
+            </div>
+            <div class="getMusic">
+                <div class="pause clear" id="pause"></div>
+                <div class="player clear">
+                    <audio  loop="false"id="mymusic" >
+                        <source src="./images/2.mp3"></source>
+                      </audio> 
+                </div>
+                <div class="play clear">
+                    <div id="buffer">
+                        <div class="progressBar" id="wp_processBar"></div>
+                        <div class="schedule-btn" id="wp_processBtn"></div>
+                    </div>
+                </div>
+                <div id="right">
+                    <p id="playTime">00:00</p>
+                    <div id="sound" class="sound"></div>
+                </div>
+            </div>
+            <div class="down">
+                <div></div>
+                <a href="###">免费下载这首歌</a>
+            </div>
+            <div class="comment">
+                <div class="headshort">
+                    <img src="images/郭.png">
+                </div>
+                <div class="trangle"></div>
+                <div class="com_content">
+                    <p class="com_name">郭子仪——H5班</p>
+                    <div class="com_music">
+                        <div></div>
+                    </div>
+                    <p class="com_title">喜羊羊与灰太狼</p>
+                    <a href="###">去现场 ></a>
+                </div>
+            </div>
+        </div>
+        <div class="majorComment">
+            <span>评论</span>
+            <span class="change">1703条评论</span>
+            <hr/>
+            <div class="real">
+                <div><img src="images/郭.png"></div>
+                <textarea placeholder="分享你的音乐见解" id="input"></textarea>
+            </div>
+            <div class="getEx">
+                <div class="expression"><a href="###"><img src="./images/表情.png"></a></div>
+                <p id="judge">已输入0个字</p>
+                <button id="submit">评论</button>
+            </div>
+        </div>
+        <div class="goodComments" id="nowget">
+            <div><p id="letfirst">精彩评论</p></div>
+            <hr/>
+            <div id="move">
+            <div class="getrealComment"  id="getrealComment">
+                <img src="images/郭.png" class="headt">
+                <span class="getName">郭子仪</span>
+                <p class="realComment">TOO</p>
+                <p class="getTime">2017-06-10 07:00:42</p>
+                <span class="share"><a href="###">分享</a></span>
+                <span class="delete"><a href="###">删除</a></span>
+                <span class="good">163<a href="###"><img src="./images/点赞.png"></a></span>
+                <span class="response"><a href="###">回复</a></span>
+            </div>
+            <div class="getrealComment">
+                <img src="./images/灰色音乐.jpg" class="headt">
+                <span class="getName">Forget</span>
+                <p class="realComment">我喜欢很多歌曲，喜欢过很多唱歌的人，那些有时不是我的爱好，已经成为了我那段青春的会议，我现在可以很骄傲</p>
+                <p class="getTime">2017-06-03 16:58:02</p>
+                <span class="share"><a href="###">分享</a></span>
+                <span class="delete"><a href="###">删除</a></span>
+                <span class="good">149<a href="###"><img src="./images/点赞.png"></a></span>
+                <span class="response"><a href="###">回复</a></span>
+            </div>
+            <div class="getrealComment">
+                <img src="./images/灰色音乐.jpg" class="headt">
+                <span class="getName">亚里士多德</span>
+                <p class="realComment">学校晚会表演这歌<img src="./images/小表情.png"></p>
+                <p class="getTime">2017-05-14 16:16:53</p>
+                <span class="share"><a href="###">分享</a></span>
+                <span class="delete"><a href="###">删除</a></span>
+                <span class="good">106<a href="###"><img src="./images/点赞.png"></a></span>
+                <span class="response"><a href="###">回复</a></span>
+            </div>
+            <div id="blank" class="blank"></div>
+            </div>
+        
+
+        </div>
+        <div class="pages">
+            <div class="letCenter">
+            <div id="last" class="find"><</div>
+            <div id="first" class="find">1</div>
+            <div id="second" class="find">2</div>
+            <div id="third" class="find">3</div>
+            <div id="getMore" class="find">…</div>
+            <div id="seventh" class="find">17</div>
+            <div id="next" class="find">></div>
+        </div>
+        </div>
+    </div>
+</body>
+<script>
+    var count = 0;
+    var pause = document.getElementById("pause");
+    var mymusic = document.getElementById("mymusic");
+    var playTime = document.getElementById("playTime");
+
+    var buffer = document.getElementById("buffer"); //缓冲区
+    var wp_processBar = document.getElementById("wp_processBar");//进度条
+    var wp_processBtn = document.getElementById("wp_processBtn");//小圆点
+
+    var nowget = document.getElementById("nowget");
+
+    var input = document.getElementById("input");//得到的是评论框里面输入的内容
+    var submit = document.getElementById("submit");//提交评论按钮
+    var judge = document.getElementById("judge");//判断评论框中的文字
+    var blank = document.getElementById("blank");
+    var obj = new Array();//定义一个数组用于存储所有已经存储进去的内容
+    var oldList;
+    var i = 0;//计数器
+    var j = 1;
+
+    var next = document.getElementById("next");
+    var move = document.getElementById("move");
+  
+   
+    //暂停开始
+    pause.onclick = function(){
+      count++;
+      if(count % 2 != 0){
+        mymusic.play();
+        pause.setAttribute("class","playGo");
+
+        var a = setInterval(function(){
+          var x = parseInt(mymusic.currentTime);
+          var now = mymusic.currentTime;
+          var length = mymusic.duration;
+          //时间
+          if(x < 10){
+            playTime.innerHTML = "00" + ":" + "0" + x;
+          }else if(x < 60){
+            playTime.innerHTML = "00" + ":" + x;
+          }else{
+            var z = parseInt(x / 60);
+            var y = parseInt(x % 60);
+            if(y < 10){
+              y = "0" + y;
+            }
+            if(z < 10){
+              playTime.innerHTML = "0" + z +":" + y;
+              }else{
+                playTime.innerHTML = z + ":" + y;
+              }
+          }
+          //进度条
+          buffer.style.width = parseFloat(now/length + 0.1) * 200 + "px";
+          wp_processBar.style.width = parseFloat(now/length) * 200 + "px";
+          wp_processBtn.style.left = parseFloat(now/length) * 200 + "px";
+           },1000);
+        
+      }else{
+        mymusic.pause();
+        pause.setAttribute("class","pause");
+      }
+    }
+    //静音/取消静音
+    sound.onclick = function(){
+      if(mymusic.muted){
+        mymusic.muted = false;
+      }else{
+        mymusic.muted = true;
+      }
+    }
+
+
+    //判断文本框输入的字数
+    input.addEventListener("keyup",function(){
+        judge.innerHTML = "已输入" + input.value.length + "个字";
+    })
+
+
+
+
+    //获取当前时间的函数
+    function getTime(){
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+        var hour = date.getHours();
+        var min = date.getMinutes();
+        var seconds = date.getSeconds();
+        var current = year + "-" + month+"-"+day+"  " +hour+":"+min +":" + seconds;
+        return current;
+    }
+    //定义存储对象
+    submit.onclick = function(){
+        var now = getTime();
+        var value = input.value;
+        obj[i] = {
+            "val":value,
+            "tim":now
+        }
+        if(window.localStorage){
+            localStorage['con'] = JSON.stringify(obj);
+            i++;
+        }else{
+            alert("该浏览器不支持本地存储");
+        }
+    }
+    //显示历史评论
+    window.onload = function(){
+            var json = window.localStorage.getItem("con");
+            var jsonObj = JSON.parse(json);
+            for(var x = 1;x<=localStorage.length;x++){
+                var value1 = jsonObj[x].val;
+                var time1 = jsonObj[x].tim;
+                cre(value1,time1);
+                if(x%3==0){
+                    var div1 = document.createElement("div");
+                    div1.setAttribute("class","blank");
+                    nowget.appendChild(div1);
+                }
+            
+        }
+        
+
+    }
+
+    //翻页，显示评论
+    next.onclick = function(){
+        move.style.marginTop = -265.4* j + "px";
+        j++;
+    }
+   
+
+
+
+    function cre(value,now){
+        //将已经进行评论发表的内容显示在精彩评论区中
+        var div = document.createElement("div");
+            div.setAttribute("class","getrealComment");
+            nowget.appendChild(div);
+
+            var img = document.createElement("img");
+            img.setAttribute("class","headt");
+            div.appendChild(img);
+            img.src = "./images/灰色音乐.jpg";
+            
+            var span = document.createElement("span");
+            span.setAttribute("class","getName");
+            span.innerHTML = "匿名";
+            div.appendChild(span);
+
+            var p = document.createElement("p");
+            p.setAttribute("class","realComment");
+            p.innerHTML = value;
+            div.appendChild(p);
+
+            var p1 = document.createElement("p");
+            p1.setAttribute("class","getTime");
+            p1.innerHTML = now;
+            div.appendChild(p1);
+
+            var span1 = document.createElement("span");
+            span1.setAttribute("class","share");
+            div.appendChild(span1);
+
+            var a = document.createElement("a");
+            a.innerHTML = "分享";
+            a.href = "###";
+            span1.appendChild(a);
+
+            var span2 = document.createElement("span");
+            span2.setAttribute("class","delete");
+            div.appendChild(span2);
+
+            var a1 = document.createElement("a");
+            a1.innerHTML = "删除";
+            a1.href = "###";
+            span2.appendChild(a1);
+            var span4 = document.createElement("span4");
+            span4.setAttribute("class","good");
+            div.appendChild(span4);
+
+            var a3 = document.createElement("a");
+            a.href = "###";
+            span4.appendChild(a3);
+
+            var aimg = document.createElement("img");
+            span4.appendChild(aimg);
+            aimg.src = "./images/点赞.png";
+            var span3 = document.createElement("span");
+            span3.setAttribute("class","response");
+            div.appendChild(span3);
+
+            var a2 = document.createElement("a");
+            a2.innerHTML = "回复";
+            a2.href = "###";
+            span3.appendChild(a2);
+
+    }
+</script>
+</html>
